@@ -10,25 +10,24 @@ public class SeasonTicket {
     private LocalDate dateRegistr;
     private LocalDate dateEndRegiste;
     private Client client;
-    private String[] ticketPermission;
-    private LocalTime startPermission;
-    private LocalTime endPermission;
+    private TicketPermission ticketPermission;
 
 
     // конструктор
-    public SeasonTicket(String typeTicket, Client client, LocalDate dateEndRegiste ){
+    public SeasonTicket(String typeTicket, Client client, LocalDate dateEndRegiste) {
 
-        if (typeTicket == null && !typeTicket.equals("Разовый") && !typeTicket.equals("Дневной") && !typeTicket.equals("Полный")){
+        if (typeTicket == null || (!typeTicket.equals("Разовый") && !typeTicket.equals("Дневной") && !typeTicket.equals("Полный"))) {
             throw new IllegalArgumentException("Не верно введён тип абонемента " + typeTicket);
         }
-        if (client == null){
+        if (client == null) {
             throw new IllegalArgumentException("Клиент не может быть пустым");
         }
         this.typeTicket = typeTicket;
         this.client = client;
         dateRegistr = LocalDate.now();
         setDateEndRegiste(dateEndRegiste);
-        ticketPermission(typeTicket);
+
+        this.ticketPermission = ticketPermission(typeTicket);
 
     }
 
@@ -49,50 +48,38 @@ public class SeasonTicket {
         return client;
     }
 
-    public LocalTime getStartPermission() {
-        return startPermission;
-    }
 
-    public LocalTime getEndPermission() {
-        return endPermission;
-    }
-    public String[] getTicketPermissions(){
+    public TicketPermission getTicketPermissions(){
         return ticketPermission;
     }
 
     // клиент может продлить текущий абонимент
     public void setDateEndRegiste(LocalDate dateEndRegiste) {
-        if (LocalDate.now().isAfter(dateEndRegiste) || dateEndRegiste.equals(LocalDate.now())){
+        if (LocalDate.now().isAfter(dateEndRegiste) || dateEndRegiste.equals(LocalDate.now())) {
             throw new IllegalArgumentException("Дата окончания действия сертификата не может быть меньше текущей");
         }
         this.dateEndRegiste = dateEndRegiste;
     }
 
     // методы
-    private void ticketPermission(String typeTicket){
-        if (typeTicket.equals("Разовый")){
-            ticketPermission =  new String[] {"бассейн" , "тренажерный зал"};
-            startPermission = LocalTime.of(8,00);
-            endPermission = LocalTime.of(22,00);
+    private TicketPermission ticketPermission(String typeTicket) {
+        if (typeTicket.equals("Разовый")) {
+            return TicketPermission.РАЗОВЫЙ;
         }
-        if (typeTicket.equals("Дневной")){
-            ticketPermission =  new String[] {"тренажерный зал" , "групповые занятия"};
-            startPermission = LocalTime.of(8,00);
-            endPermission = LocalTime.of(16,00);
+        if (typeTicket.equals("Дневной")) {
+            return TicketPermission.ДНЕВНОЙ;
         }
-        ticketPermission =  new String[] {"тренажерный зал" , "бассейн", "групповые занятия"};
-        startPermission = LocalTime.of(8,00);
-        endPermission = LocalTime.of(22,00);
+        return TicketPermission.ПОЛНЫЙ;
     }
 
     // методы
-    public String getTicketPermission(){
+    public String getTicketPermission() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Абонимент '").append(getTypeTicket()).append("' позволяет посещать:");
-        for (int i = 0; i < ticketPermission.length; i++) {
-            stringBuilder.append(" ").append(ticketPermission[i]).append(",");
+        stringBuilder.append("Абанимент '").append(ticketPermission.getName()).append("' позволяет посещать: ");
+        for (int i = 0; i < ticketPermission.getTicketPermission().length; i++) {
+            stringBuilder.append(ticketPermission.getTicketPermission()[i]).append(", ");
         }
-        stringBuilder.append( "с " ).append(startPermission).append(" до ").append(endPermission);
+        stringBuilder.append(" с ").append(ticketPermission.getStartPermission()).append(" до ").append(ticketPermission.getEndPermission());
         return stringBuilder.toString();
     }
 
@@ -100,9 +87,9 @@ public class SeasonTicket {
 
     @Override
     public String toString() {
-        return "{" + "Клиент=" + client.getName() +" " + client.getSurnema() +
+        return "{" + "Клиент=" + client.getName() + " " + client.getSurnema() +
                 ", тип билета='" + typeTicket + '\'' +
                 ", дата окончания действия билета=" + dateEndRegiste +
-                                '}';
+                '}';
     }
 }

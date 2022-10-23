@@ -23,8 +23,8 @@ public class Client {
     }
     // может поменять имя
     public void setName(String name) {
-        if (name.length() < 3 && name == null){
-            throw new IllegalArgumentException("Имя не может быть меньше 3 символов");
+        if (name == null || name.length() < 3  ){
+            throw new IllegalArgumentException("Имя не может быть меньше 3 символов или пустым");
         }
         this.name = name;
     }
@@ -34,8 +34,8 @@ public class Client {
     }
     // фамилия может быть изменена
     public void setSurnema(String surnema) {
-        if (surnema.length() < 2 && surnema == null){
-            throw new IllegalArgumentException("Фамилия не может быть меньше 2 символов");
+        if (surnema == null || surnema.length() < 2){
+            throw new IllegalArgumentException("Фамилия не может быть меньше 2 символов или пустым");
         }
         this.surname = surnema;
     }
